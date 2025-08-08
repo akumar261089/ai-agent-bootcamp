@@ -1,6 +1,6 @@
 # **📘 AI Agent CEO Bootcamp – Trainer Mode Workbook**
 
-**Duration:** 7 Days (10 hrs/day)
+**Duration:** 11 Days (10 hrs/day)
 **Format:** Learn → Build → Test → Review
 
 ---
@@ -879,5 +879,258 @@ By default, templates use:
 - **Vector DB:** Chroma (can switch to Pinecone or Weaviate).  
 - **Deployment:** Docker Compose (can upgrade to Kubernetes/AWS if needed).  
 - **LLM Backend:** OpenAI GPT (or local options like Llama).  
+
+---
+Got it — I’ll extend your **AI Agent CEO Bootcamp** into a **full 9-day version** so we can integrate all the missing topics without rushing.
+
+I’ll preserve your “trainer-mode” format (hour → learn → exercise → checkpoint) and slot each new topic where it fits naturally in the learning progression.
+
+---
+
+## **📘 AI Agent CEO Bootcamp – Trainer Mode Workbook (Extended 9-Day Version)**
+
+**Duration:** 9 Days (10 hrs/day)
+**Format:** Learn → Build → Test → Review
+
+---
+
+
+## **Day 10 – Advanced Data, Memory & Knowledge Reasoning**
+
+**Goal:** Equip agents with industrial-strength data pipelines, advanced memory strategies, and knowledge reasoning capabilities.
+
+---
+
+### Hour 1 — Data Engineering for AI Agents
+
+**Learn:**
+
+* ETL for agent data sources
+* APIs, file parsing, DB connections
+* Handling structured vs unstructured input
+
+**Exercise:** Connect an agent to pull CSV data from a public repo and clean it for analysis.
+**Checkpoint:** ✅ Agent can ingest and clean external data.
+
+---
+
+### Hour 2 — Building Scalable Data Pipelines
+
+**Learn:**
+
+* Scheduling ETL jobs (Airflow, Prefect)
+* Streaming ingestion (Kafka basics)
+
+**Exercise:** Create a mock daily ingestion pipeline for lead data.
+**Checkpoint:** ✅ Pipeline simulates daily data updates.
+
+---
+
+### Hour 3 — Advanced Memory Architectures
+
+**Learn:**
+
+* Episodic, semantic, working memory
+* Memory pruning and summarization strategies
+* Cross-agent shared memory vaults
+
+**Exercise:** Implement a hybrid memory: short-term buffer + long-term vector store with pruning.
+**Checkpoint:** ✅ Agent automatically summarizes old context before saving.
+
+---
+
+### Hour 4 — Knowledge Graphs for Reasoning
+
+**Learn:**
+
+* Graph databases (Neo4j)
+* Reasoning over interconnected entities
+* When to use graph search vs vector search
+
+**Exercise:** Create a small company org chart in Neo4j and query relationships.
+**Checkpoint:** ✅ Agent answers “Who reports to the CTO?” from graph data.
+
+---
+
+### Hour 5 — Multi-Source Knowledge Fusion
+
+**Learn:**
+
+* Combining vector DB + graph DB results
+* Source weighting & confidence scoring
+
+**Exercise:** Merge graph and vector DB outputs for a single query.
+**Checkpoint:** ✅ Agent returns fused answer with confidence scores.
+
+---
+
+### Hour 6 — External Knowledge APIs
+
+**Exercise:** Connect to Wikipedia + Wolfram Alpha APIs and allow the agent to pick the best source.
+**Checkpoint:** ✅ Agent uses correct source based on query type.
+
+---
+
+### Hour 7 — Data Quality & Validation
+
+**Learn:**
+
+* Schema validation (Pydantic)
+* Detecting inconsistent or missing data
+
+**Exercise:** Build a validator that rejects dirty records before they reach memory.
+**Checkpoint:** ✅ Invalid records blocked.
+
+---
+
+### Hour 8 — Mini Project: Data-Aware Research Agent
+
+**Build:** Product research agent with:
+
+* ETL pipeline
+* Hybrid memory
+* Graph + vector search reasoning
+  **Checkpoint:** ✅ Runs a full product research workflow using multiple knowledge stores.
+
+---
+
+### Hour 9 — Cost Optimization for Data Storage
+
+**Learn:** Archival strategies, cold storage vs hot storage, selective retrieval.
+**Checkpoint:** ✅ You can describe cost-optimized storage tiers for agent memory.
+
+---
+
+### Hour 10 — Review & Deliverables
+
+**Deliverables:** Data pipeline code, hybrid memory, graph store integration, validation layer.
+**Checkpoint:** ✅ All artifacts committed with runbook.
+
+---
+
+## **Day 11 – Security, Testing, Globalization & Continuous Learning**
+
+**Goal:** Harden, test, localize, and evolve agents for global, production-grade deployment.
+
+---
+
+### Hour 1 — Deep Security for AI Agents
+
+**Learn:**
+
+* Jailbreak prevention techniques
+* Adversarial prompt detection
+* API abuse monitoring
+
+**Exercise:** Implement a regex + embedding filter to flag malicious inputs.
+**Checkpoint:** ✅ Unsafe prompts detected and blocked.
+
+---
+
+### Hour 2 — Advanced Tool Security
+
+**Learn:**
+
+* Command sandboxing
+* API key scoping
+* Dynamic permission granting
+
+**Exercise:** Allow tool calls only if approved in session scope.
+**Checkpoint:** ✅ Unauthorized tool use blocked.
+
+---
+
+### Hour 3 — Agent Testing & QA
+
+**Learn:**
+
+* Unit tests for agent logic
+* Mocking API calls in tests
+* Regression testing prompts
+
+**Exercise:** Write Pytest cases for a 3-agent workflow using mocked tools.
+**Checkpoint:** ✅ Tests pass without real API calls.
+
+---
+
+### Hour 4 — CI/CD for Agent Workflows
+
+**Learn:**
+
+* Automated tests in GitHub Actions
+* Deploy only if tests pass
+
+**Exercise:** Add a basic CI workflow to repo.
+**Checkpoint:** ✅ Repo rejects failing code.
+
+---
+
+### Hour 5 — Internationalization & Localization
+
+**Learn:**
+
+* Multi-language prompt handling
+* Translation APIs
+* Locale-specific formatting
+
+**Exercise:** Modify an agent to support English, Hindi, and Spanish output.
+**Checkpoint:** ✅ Agent outputs in selected language.
+
+---
+
+### Hour 6 — Region-Specific Compliance
+
+**Learn:** GDPR, CCPA basics, data residency.
+**Exercise:** Add compliance tags to stored records (region, retention date).
+**Checkpoint:** ✅ Records tagged with correct compliance metadata.
+
+---
+
+### Hour 7 — Continuous Learning from Feedback
+
+**Learn:**
+
+* RLHF basics
+* Dataset building from logs
+* Versioned model deployment
+
+**Exercise:** Collect failed task logs, turn them into fine-tuning examples (mock).
+**Checkpoint:** ✅ Dataset created for tuning.
+
+---
+
+### Hour 8 — Incident Response & Monitoring
+
+**Learn:**
+
+* Drift detection
+* Health alerts
+* Rollback strategy
+
+**Exercise:** Implement a “panic mode” that disables a faulty agent.
+**Checkpoint:** ✅ Panic mode works.
+
+---
+
+### Hour 9 — Mini Project: Global, Secure, Self-Improving Agent
+
+**Build:** Customer service agent with:
+
+* Multi-language support
+* Secure tool calls
+* Feedback-driven improvement loop
+  **Checkpoint:** ✅ Passes security tests and serves global queries.
+
+---
+
+### Hour 10 — Final Graduation & Beyond
+
+**Deliverables:**
+
+* Extended 9-day repo
+* Deployment-ready agent with advanced data, reasoning, security, and localization
+* Post-bootcamp roadmap (continuous learning, model updates, global scaling)
+
+✅ **Final Checkpoint:** You can launch, secure, monitor, and improve a global AI company autonomously.
 
 ---
