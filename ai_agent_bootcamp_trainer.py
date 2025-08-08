@@ -27,7 +27,7 @@ import json
 import datetime
 import textwrap
 import requests
-
+from datetime import datetime, timezone
 # Optional: import openai if available
 try:
     import openai
@@ -264,7 +264,7 @@ def update_step_content(step_id, content, status="completed"):
     c = conn.cursor()
     c.execute(
         "UPDATE steps SET content=?, status=?, last_updated=? WHERE id=?",
-        (content, status, datetime.datetime.utcnow().isoformat(), step_id),
+        (content, status, datetime.now(timezone.utc).isoformat(), step_id),
     )
     conn.commit()
     conn.close()
@@ -314,25 +314,26 @@ class OpenAIAdapter(BaseAdapter):
         try:
             if cfg.get("api_type") == "azure":
                 # Azure: use deployment name as model
-                resp = openai.ChatCompletion.create(
-                    engine=model,
+                response = openai.ChatCompletion.create(
+                    deployment_id=model,
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.2,
                     max_tokens=1200,
                 )
             else:
-                resp = openai.ChatCompletion.create(
+                # Standard OpenAI API call
+                response = openai.ChatCompletion.create(
                     model=model,
                     messages=[{"role": "user", "content": prompt}],
                     temperature=0.2,
                     max_tokens=1200,
                 )
-            text = "".join([choice['message']['content'] for choice in resp['choices']])
-            return text
+
+            # New response format
+            return response.choices[0].message.content  # Extract the generated content
+
         except Exception as e:
             return f"<Error from OpenAI adapter: {e}>"
-
-
 class OllamaAdapter(BaseAdapter):
     def __init__(self, config):
         super().__init__(config)
@@ -340,16 +341,26 @@ class OllamaAdapter(BaseAdapter):
         self.url = config.get("url") or "http://localhost:11434/api/generate"
         self.model = config.get("model") or "llama2"
 
+    # def generate(self, prompt):
+    #     try:
+    #         payload = {"model": self.model, "prompt": prompt}
+    #         r = requests.post(self.url, json=payload, timeout=60)
+    #         r.raise_for_status()
+    #         data = r.json()
+    #         # Adjust parsing depending on Ollama response format
+    #         return data.get("text") or json.dumps(data)
+    #     except Exception as e:
+    #         return f"<Error from Ollama adapter: {e}>"
     def generate(self, prompt):
         try:
-            payload = {"model": self.model, "prompt": prompt}
-            r = requests.post(self.url, json=payload, timeout=60)
+            payload = {"model": self.model, "prompt": prompt, "stream": False}
+            r = requests.post(self.url, json=payload, timeout=120)
             r.raise_for_status()
             data = r.json()
-            # Adjust parsing depending on Ollama response format
-            return data.get("text") or json.dumps(data)
+            return data.get("response") or data.get("text") or json.dumps(data)
         except Exception as e:
             return f"<Error from Ollama adapter: {e}>"
+
 
 
 class GeminiAdapter(BaseAdapter):
@@ -436,10 +447,17 @@ with col1:
     hour = st.number_input("Hour", min_value=1, max_value=10, value=1)
 
     if st.button("Load step"):
-        st.experimental_rerun()
+        st.session_state['trigger_rerun'] = True
 
     st.markdown("---")
     st.button("Export all completed as Markdown", on_click=None)
+    # Footer: Created by...
+    st.markdown(
+        """
+        ---
+        **Created by [Abhinav Kumar](https://github.com/akumar261089)**  
+        """
+    )
 
 with col2:
     step = get_step(day, hour)
@@ -454,13 +472,15 @@ with col2:
 
         # Action buttons
         st.markdown("---")
-        gen_col1, gen_col2, gen_col3 = st.columns([1,1,1])
+        gen_col1, gen_col2, gen_col3, gen_col4 = st.columns([1,1,1,1])
         with gen_col1:
             generate = st.button("Generate Content from LLM")
         with gen_col2:
             mark_complete = st.button("Mark Complete")
         with gen_col3:
             export_md = st.button("Export this step as Markdown")
+        with gen_col4:
+            import_md = st.button("Load from Markdown")
 
         # Build adapter config dict based on provider selection
         adapter_cfg = {}
@@ -495,12 +515,12 @@ with col2:
                     result = adapter.generate(step['prompt'])
                     update_step_content(step['id'], result, status='completed')
                     st.success("Generated and saved")
-                    st.experimental_rerun()
+                    st.session_state['trigger_rerun'] = True
 
         if mark_complete:
             update_step_content(step['id'], step.get('content') or '', status='completed')
             st.success("Marked complete")
-            st.experimental_rerun()
+            st.session_state['trigger_rerun'] = True
 
         if export_md:
             filename = os.path.join(EXPORT_DIR, f"Day{day}_Hour{hour}.md")
@@ -509,6 +529,27 @@ with col2:
             with open(filename, 'w', encoding='utf-8') as f:
                 f.write(md)
             st.success(f"Exported to {filename}")
+        if import_md:
+            filename = os.path.join(EXPORT_DIR, f"Day{day}_Hour{hour}.md")
+
+            if os.path.exists(filename):
+                try:
+                    with open(filename, "r", encoding="utf-8") as f:
+                        md_text = f.read()
+
+                    # Crude parse: everything after '## Generated Content:' is lesson content
+                    if "## Generated Content:" in md_text:
+                        imported_content = md_text.split("## Generated Content:")[1].strip()
+                        update_step_content(step['id'], imported_content, status='completed')
+                        st.success("Imported from Markdown and saved to DB.")
+                        st.session_state['trigger_rerun'] = True
+                    else:
+                        st.error("Invalid markdown format for import.")
+                except Exception as e:
+                    st.error(f"Error reading markdown file: {e}")
+            else:
+                st.error(f"Markdown file not found: {filename}")
+
 
         st.markdown("---")
         st.markdown("### Generated Content")
@@ -529,7 +570,7 @@ if st.sidebar.button("Go to next hour"):
         next_day = min(11, day + 1)
     st.session_state['nav_day'] = next_day
     st.session_state['nav_hour'] = next_hour
-    st.experimental_rerun()
+    st.session_state['trigger_rerun'] = True
 
 if st.sidebar.button("Go to previous hour"):
     prev_hour = hour - 1
@@ -539,7 +580,7 @@ if st.sidebar.button("Go to previous hour"):
         prev_day = max(1, day - 1)
     st.session_state['nav_day'] = prev_day
     st.session_state['nav_hour'] = prev_hour
-    st.experimental_rerun()
+    st.session_state['trigger_rerun'] = True
 
 st.sidebar.markdown("---")
 st.sidebar.subheader("Batch generate (selected range)")
