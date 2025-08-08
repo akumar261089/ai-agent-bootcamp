@@ -505,9 +505,7 @@ with col2:
         if export_md:
             filename = os.path.join(EXPORT_DIR, f"Day{day}_Hour{hour}.md")
             content = step.get('content') or ""
-            md = f"# {step['title']}\n\n## Topic:\n{step['topic']}\n\n## Prompt:\n```
-{step['prompt']}
-```\n\n## Generated Content:\n\n{content}\n"
+            md = f"# {step['title']}\n\n## Topic:\n{step['topic']}\n\n## Prompt:\n{step['prompt']}\n\n## Generated Content:\n\n{content}\n"
             with open(filename, 'w', encoding='utf-8') as f:
                 f.write(md)
             st.success(f"Exported to {filename}")
